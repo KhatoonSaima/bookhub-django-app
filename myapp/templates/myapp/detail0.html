@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Detail</title>
+</head>
+<body>
+    <h2>{{ book.title }}</h2>
+    <p>Price: {{ book.price }}</p>
+    <p>Publisher: {{ book.publisher }}</p>
+
+    <!-- Namespaced URL -->
+    <p><a href="{% url 'myapp:index' %}">Back to main page</a></p>
+</body>
+</html>

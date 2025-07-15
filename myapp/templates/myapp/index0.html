@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>eBook Website</title>
+</head>
+<body>
+    {% if booklist %}
+        <h2>List of Books</h2>
+        <ol>
+            {% for book in booklist %}
+                {#<li>{{ book.title }}</li>#}
+                {# Link each book title to its detail page using namespaced URL #}
+                <li><a href="{% url 'myapp:detail' book.id %}">{{ book.title }}</a></li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <strong>There are no available books!</strong>
+    {% endif %}
+
+    <!-- Hardcoded URL -->
+    <!--<p><a href="/myapp/about">About page</a></p>-->
+
+    <!-- Namespaced URL -->
+    <p><a href="{% url 'myapp:about' %}">About page</a></p>
+
+</body>
+</html>

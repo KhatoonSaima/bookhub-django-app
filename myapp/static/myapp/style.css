@@ -1,0 +1,16 @@
+body {
+    background-color: #f5f0f0;;
+    color: #333;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    font-size: 24px;
+    color: navy;
+    font-style: italic;
+}
+
+.hbar1 {
+    display: inline;
+    margin: 15px;
+}

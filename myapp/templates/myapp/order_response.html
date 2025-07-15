@@ -1,0 +1,11 @@
+{% extends 'myapp/base.html' %}
+
+{% block body_block %}
+  <h2>Order Placed Successfully!</h2>
+  <p>You ordered the following books:</p>
+  <ul>
+    {% for book in books %}
+      <li>{{ book.title }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
