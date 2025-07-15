@@ -41,7 +41,8 @@ def detail(request, book_id):
     return render(request, 'myapp/detail.html', {'book': book})
 
 
-
+# View to display and process the feedback form
+# Shows borrow/purchase choices and displays user selection on submission
 def getFeedback(request):
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
@@ -60,30 +61,16 @@ def getFeedback(request):
         form = FeedbackForm()
         return render(request, 'myapp/feedback.html', {'form': form})
 
-'''
+
+# View to display a search form and filter books based on user input
+# Filters books by optional category and a maximum price threshold
+# Displays results along with a greeting message
 def findbooks(request):
     if request.method == 'POST':
         form = SearchForm(request.POST)
         if form.is_valid():
             name = form.cleaned_data['name']
-            category = form.cleaned_data['category']
-            # Dummy list of books for illustration
-            booklist = [b for b in ['Book A', 'Book B'] if category in b]
-            return render(request, 'myapp/results.html', {'name': name, 'booklist': booklist})
-        else:
-            return HttpResponse('Invalid data')
-    else:
-        form = SearchForm()
-        return render(request, 'myapp/findbooks.html', {'form': form})
-'''
-
-
-def findbooks(request):
-    if request.method == 'POST':
-        form = SearchForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data['name']
-            category_code = form.cleaned_data['category']
+            category_code = form.cleaned_data['category']   # e.g. F for Fiction
             max_price = form.cleaned_data['max_price']
 
             print(f"name: {name}, category: {category_code}, max_price: {max_price}")
@@ -95,7 +82,7 @@ def findbooks(request):
             # Query books
             if category_code:
                 booklist = Book.objects.filter(category=category_code, price__lte=max_price)
-                print(f"booklist: {booklist}")
+                #print(f"booklist: {booklist}")
             else:
                 booklist = Book.objects.filter(price__lte=max_price)
 
@@ -111,17 +98,19 @@ def findbooks(request):
         form = SearchForm()
         return render(request, 'myapp/findbooks.html', {'form': form})
 
-
+# View to place a new order using the OrderForm
+# Saves selected books and associates them with a member
+# If order type is 'borrow', adds books to member's borrowed list
 def place_order(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
             books = form.cleaned_data['books']
-            order = form.save(commit=False)
+            order = form.save(commit=False)     # Creates an Order object (not saved yet)
             member = order.member
             type = order.order_type
-            order.save()
-            form.save_m2m()  # Save selected books to the M2M relationship
+            order.save()                        # Now save to DB
+            form.save_m2m()                     # Save selected books to the M2M relationship
 
             if type == 1:  # 1 = Borrow
                 for b in order.books.all():

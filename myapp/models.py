@@ -55,6 +55,8 @@ class Member(User):
         return self.username   # Return the username as the string representation of the Member
 
 # Model representing a order
+# Model representing a book order by a member.
+# Supports both purchase and borrow types, and tracks the order date.
 class Order(models.Model):
     ORDER_TYPE_CHOICES = [
         (0, 'Purchase'),
