@@ -2,9 +2,14 @@ from django.shortcuts import render, get_object_or_404
 from .models import Book, CATEGORY_CHOICES
 from django.http import HttpResponse
 from .forms import FeedbackForm, SearchForm, OrderForm
-
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 
 # View to display the index page with a list of books
+@login_required(login_url='/myapp/login/')
 def index(request):
     # Get the first 10 books ordered by ID
     booklist = Book.objects.all().order_by('id')[:10]
@@ -125,3 +130,40 @@ def place_order(request):
     else:
         form = OrderForm()
         return render(request, 'myapp/placeorder.html', {'form': form})
+
+"""
+Handle user login functionality.
+
+If the request method is POST, extract the username and password from the form,
+authenticate the user using Django's built-in authentication system,
+and log them in if credentials are valid and the user is active.
+Redirect to the index page on success or return an error message otherwise.
+
+If the request method is GET, render the login form template.
+"""
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect(reverse('myapp:index'))
+            else:
+                return HttpResponse('Your account is disabled.')
+        else:
+            return HttpResponse('Invalid login details.')
+    else:
+        return render(request, 'myapp/login.html')
+
+"""
+Log out the currently authenticated user.
+
+This view requires the user to be logged in (enforced by @login_required).
+It logs out the user and redirects them to the index page.
+"""
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('myapp:index'))
